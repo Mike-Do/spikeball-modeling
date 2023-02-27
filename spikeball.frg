@@ -83,18 +83,18 @@ pred SBValidStates {
 
 pred canServe[s: SBState] {
     // if the ball is on the ground or we are in the initState
-    [SBinitState[s]] or
-    s.ball = Ground
+    ([SBinitState[s]] or
+    s.ball = Ground)
     // define who the server is
     s.possession = Team1 implies s.serving_team = Team1
     s.possession = Team2 implies s.serving_team = Team2    
 }
 
-pred point[s: SBState] {
+pred point[pre: SBState, post: SBState] {
     // if ball touches ground, score for team w/o possession
-    s.ball = Ground implies {
+    pre.ball = Ground implies {
         // TODO: may have to revisit if error thrown
-        (s.possession = Team1) => (s.score[Team2] = s.score[Team2] + 1) else (s.score[Team1] = s.score[Team1] + 1)
+        (pre.possession = Team1) => (subtract[post.score[Team2], pre.score[Team2]] = 1) else (subtract[post.score[Team1], pre.score[Team1]] = 1)
     }
 }
 
@@ -112,7 +112,74 @@ pred SBfinalState[s: SBState] {
 }
 
 pred SBvalidTransition[pre: State, post: State] {
-    
+    // GUARD
+    // no one has won yet (has required score)
+    all t: Team {
+        pre.score[t] >=0
+        pre.score[t] < 3
+    }
+
+    // If [canServe] in pre state, in post state the ball’s position is on the net, and the possession shifts to the other team
+    [canServe[pre]] => {
+        post.ball = Net
+        // TODO: may have to revisit if error thrown
+        (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
+    }
+
+    // TRANSITION based on cases 
+    // if ball hits the net
+    (pre.ball = Net) => [SBnetTransition[pre, post]]
+    // hits the ground
+    (pre.ball = Ground) => [SBgroundTransition[pre, post]]
+    // pass to team member
+    (pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) => [SBrallyTransition[pre, post]]
+}
+
+pred SBnetTransition[pre: State, post: State] {
+    // if the ball hits the net, then the ball will end up in possession of other team
+    (pre.possession = Team1) => {
+        // ball changes position
+        post.ball = South or post.ball = East or post.ball = Ground
+
+        // reset touches
+        post.num_touches[Team1] = 0
+        
+        // change possession to new team
+        post.possession = Team2
+    } else {
+        post.ball = North or post.ball = West or post.ball = Ground
+
+        // reset touches
+        post.num_touches[Team2] = 0
+
+        // change possession to new team
+        post.possession = Team1
+    }
+    // (pre.possession = Team1) => (post.ball = South or post.ball = East or post.ball = Ground) else (post.ball = North or post.ball = West or post.ball = Ground)
+
+    // FOR LATER REFERENCE
+    // change possession to new team
+    // (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
+}
+
+pred SBgroundTransition[pre: State, post: State] {
+    // the score increases (point), in next state new serve
+    point[pre, post]
+    // poessession changes and ball will in position of server
+    (pre.possession = Team1) => {
+        post.possession = Team2
+        post.serving_team = Team2
+        post.ball = Team2.server.position
+    } else {
+        post.possession = Team1
+        post.serving_team = Team1
+        post.ball = Team1.server.position
+    }
+}
+
+pred SBrallyTransition[pre: State, post: State] {
+    // pass to team member, necessariy one of the cardinal directions, increase touches
+
 }
 
 pred TransitionStates {
