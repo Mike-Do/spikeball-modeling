@@ -10,13 +10,11 @@ one sig East extends Position {}
 one sig West extends Position {}
 
 // Team Sigs
-abstract sig Team {}
-one sig Team1 extends Team {
-    server: one Person
+abstract sig Team {
+    server: one Player
 }
-one sig Team2 extends Team {
-    server: one Person
-}
+one sig Team1 extends Team {}
+one sig Team2 extends Team {}
 
 // Player Sigs
 abstract sig Player {
@@ -52,7 +50,7 @@ pred SBinitState[s: SBState] {
     s.score[Team2] = 0
     s.serving_team = Team1    
     Team1.server = P1
-    Team2.server = P3
+    Team2.server = P4
     s.ball = s.serving_team.server.position
     s.possession = s.serving_team
 }
@@ -69,7 +67,7 @@ pred SBValidStates {
         P3.position = East
         P4.position = South
         Team1.server = P1
-        Team2.server = P3
+        Team2.server = P4
         (s.ball = Net or s.ball = Ground or s.ball = North or s.ball = South or s.ball = East or s.ball = West)
         (s.possession = Team1 or s.possession = Team2)
 
@@ -83,7 +81,7 @@ pred SBValidStates {
 
 pred canServe[s: SBState] {
     // if the ball is on the ground or we are in the initState
-    ([SBinitState[s]] or
+    (SBinitState[s] or
     s.ball = Ground)
     // define who the server is
     s.possession = Team1 implies s.serving_team = Team1
@@ -120,7 +118,7 @@ pred SBvalidTransition[pre: State, post: State] {
     }
 
     // If [canServe] in pre state, in post state the ball’s position is on the net, and the possession shifts to the other team
-    [canServe[pre]] => {
+    canServe[pre] => {
         post.ball = Net
         // TODO: may have to revisit if error thrown
         (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
@@ -128,11 +126,11 @@ pred SBvalidTransition[pre: State, post: State] {
 
     // TRANSITION based on cases 
     // if ball hits the net
-    (pre.ball = Net) => [SBnetTransition[pre, post]]
+    (pre.ball = Net) => (SBnetTransition[pre, post])
     // hits the ground
-    (pre.ball = Ground) => [SBgroundTransition[pre, post]]
+    (pre.ball = Ground) => (SBgroundTransition[pre, post])
     // pass to team member
-    (pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) => [SBrallyTransition[pre, post]]
+    (pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) => (SBrallyTransition[pre, post])
 }
 
 pred SBnetTransition[pre: State, post: State] {
@@ -177,6 +175,8 @@ pred SBgroundTransition[pre: State, post: State] {
     }
 }
 
+// LEFTOFF: if a serve is happening, in the next state they will hit the net (Or the ground)????
+
 pred SBrallyTransition[pre: State, post: State] {
     // pass to team member, necessariy one of the cardinal directions, increase touches
 
@@ -199,4 +199,6 @@ pred TransitionStates {
 
 run {
     // traces
+    SBValidStates
+    TransitionStates
 } for exactly 6 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
