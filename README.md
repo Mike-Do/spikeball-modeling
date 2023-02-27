@@ -5,6 +5,7 @@ A Spikeball Model written using Forge
 States model ball from team possession to team possession.  The ball is always in the air, and the ball is always in the possession of a team.  The ball is never in the possession of a player.
 Team 1 always starts with the ball, and P1 always serves
 Team 2 always has P4 serve
+Touches will always be 3 or under (valid)
 
 # Omitted
 Cannot hit ball towards opponents
