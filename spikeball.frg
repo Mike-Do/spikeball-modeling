@@ -31,7 +31,7 @@ one sig P4 extends Player {}
 
 // State sig
 sig SBState {
-    next: lone State,
+    next: lone SBState,
     score: pfunc Team -> Int, // score per team
     num_touches: pfunc Team -> Int, //number of touches per team; need to reset
     ball: one Position, // the position of the ball
@@ -81,7 +81,7 @@ pred SBValidStates {
     }
 }
 
-pred canServe[s: State] {
+pred canServe[s: SBState] {
     // if the ball is on the ground or we are in the initState
     [SBinitState[s]] or
     s.ball = Ground
@@ -90,7 +90,7 @@ pred canServe[s: State] {
     s.possession = Team2 implies s.serving_team = Team2    
 }
 
-pred point[s: State] {
+pred point[s: SBState] {
     // if ball touches ground, score for team w/o possession
     s.ball = Ground implies {
         // TODO: may have to revisit if error thrown
@@ -98,7 +98,7 @@ pred point[s: State] {
     }
 }
 
-pred SBfinalState[s: State] {
+pred SBfinalState[s: SBState] {
     // one team reached the winning score
     s.score[Team1] = 3 or s.score[Team2] = 3
     
@@ -111,9 +111,25 @@ pred SBfinalState[s: State] {
     s.ball = Ground
 }
 
+pred SBvalidTransition[pre: State, post: State] {
+    
+}
 
+pred TransitionStates {
+    some init, final: SBState {
+        SBinitState[init]
+        SBfinalState[final]
+        all s: SBState {
+            init != s implies reachable[s, init, next]
+        }
+
+        all s: SBState {
+            some s.next implies SBvalidTransition[s, s.next]
+        }
+    }
+}
 
 
 run {
     // traces
-} for exactly 6 State, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for exactly 6 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
