@@ -105,6 +105,7 @@ pred SBfinalState[s: SBState] {
     s.num_touches[Team1] <= 3
     s.num_touches[Team2] >= 0
     s.num_touches[Team2] <= 3
+    
     // ball is on the ground, awarding the final point
     s.ball = Ground
 }
@@ -117,20 +118,24 @@ pred SBvalidTransition[pre: State, post: State] {
         pre.score[t] < 3
     }
 
-    // If [canServe] in pre state, in post state the ball’s position is on the net, and the possession shifts to the other team
-    canServe[pre] => {
-        post.ball = Net
-        // TODO: may have to revisit if error thrown
-        (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
-    }
-
     // TRANSITION based on cases 
+    
+    // If [canServe] in pre state, in post state the ball’s position is on the net, and the possession shifts to the other team
+    // If serving, ball hits net!
+    (canServe[pre]) => (serveTransition[pre, post])
     // if ball hits the net
     (pre.ball = Net) => (SBnetTransition[pre, post])
     // hits the ground
     (pre.ball = Ground) => (SBgroundTransition[pre, post])
     // pass to team member
-    (pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) => (SBrallyTransition[pre, post])
+    ((pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) and pre.num_touches[pre.possession] < 3) => (SBrallyTransition[pre, post])
+}
+
+// TODO: May need to revisit if overlap between canServe and other predicates, perhaps add a State field to canServe
+pred serveTransition[pre: State, post: State] {
+    post.ball = Net
+    // TODO: may have to revisit if error thrown
+    (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
 }
 
 pred SBnetTransition[pre: State, post: State] {
@@ -175,11 +180,18 @@ pred SBgroundTransition[pre: State, post: State] {
     }
 }
 
-// LEFTOFF: if a serve is happening, in the next state they will hit the net (Or the ground)????
-
 pred SBrallyTransition[pre: State, post: State] {
     // pass to team member, necessariy one of the cardinal directions, increase touches
-
+    // posession does not change
+    pre.possession = post.possession
+    // touches increases
+    subtract[post.num_trouches[post.possession], pre.num_touches[pre.possession]] = 1
+    
+    // ball's position changes to the position of the other team member
+    (pre.ball = North) => (post.ball = West)
+    (pre.ball = West) => (post.ball = North)
+    (pre.ball = South) => (post.ball = East)
+    (pre.ball = East) => (post.ball = South)   
 }
 
 pred TransitionStates {
@@ -201,4 +213,4 @@ run {
     // traces
     SBValidStates
     TransitionStates
-} for exactly 6 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
