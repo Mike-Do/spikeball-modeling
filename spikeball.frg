@@ -204,25 +204,39 @@ pred SBgroundTransition[pre: State, post: State] {
     // the score increases (point), in next state new serve
     // point[pre, post]
     // possession changes and ball will in position of server    
-    (pre.possession = Team1) => {
+   
+   (pre.possession = Team1) => {
         add[pre.score[Team1], 1] = post.score[Team1]
         pre.score[Team2] = post.score[Team2]
-        post.possession = Team2
+        // post.possession = Team2
     } else {
         add[pre.score[Team2], 1] = post.score[Team2]
         pre.score[Team1] = post.score[Team1]
-        post.possession = Team1
+        // post.possession = Team1
     }
 
+    // the winning team keeps serving
     (pre.serving_team = Team1) => {
-        post.serving_team = Team2
-        post.ball = Team2.server.position
-        // post.possession = Team2
+        (pre.possession = Team1) => {
+            post.serving_team = Team1
+            post.ball = Team1.server.position
+            post.possession = Team1
+        } else {
+            post.serving_team = Team2
+            post.ball = Team2.server.position
+            post.possession = Team2
+        }
     }
     else {
-        post.serving_team = Team1
-        post.ball = Team1.server.position
-        // post.possession = Team1
+        (pre.possession = Team2) => {
+            post.serving_team = Team2
+            post.ball = Team2.server.position
+            post.possession = Team2
+        } else {
+            post.serving_team = Team1
+            post.ball = Team1.server.position
+            post.possession = Team1
+        }
     }
 
     // make sure point has increased for one of the teams (XOR)
@@ -323,4 +337,4 @@ run {
     SBValidStates
     TransitionStates
     SBSetup
-} for 20 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
