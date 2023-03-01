@@ -122,7 +122,7 @@ pred SBfinalState[s: SBState] {
     
     // ball is on the ground, awarding the final point
     // s.ball = Ground
-    s.is_serving = 1
+    // s.is_serving = 1
 }
 
 pred SBvalidTransition[pre: State, post: State] {
@@ -196,7 +196,8 @@ pred SBnetTransition[pre: State, post: State] {
         }
     }
     
-    pre.is_serving = post.is_serving
+    pre.is_serving = 0
+    post.is_serving = 0
     pre.num_touches = post.num_touches
 
     // score does not change
@@ -254,7 +255,8 @@ pred SBrallyTransition[pre: State, post: State] {
     (pre.ball = East) => (post.ball = South)   
     
     // serving state does not change
-    pre.is_serving = post.is_serving
+    pre.is_serving = 0
+    post.is_serving = 0
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
@@ -263,9 +265,16 @@ pred SBrallyTransition[pre: State, post: State] {
 
 // foul to exceed 3 touches
 pred SBfoulTransition[pre: State, post: State] {
+    // (pre.possession = Team1) => {
+    //     post.possession = Team2
+    // } else {
+    //     post.possession = Team1
+    // }
     post.ball = Net
+    
     // serving state does not change
-    pre.is_serving = post.is_serving
+    pre.is_serving = 0
+    post.is_serving = 0
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
@@ -308,4 +317,4 @@ run {
     SBValidStates
     TransitionStates
     SBSetup
-} for 12 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for 20 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
