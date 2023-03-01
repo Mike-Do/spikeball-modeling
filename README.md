@@ -1,3 +1,12 @@
+ _____       _          _           _ _ 
+/  ___|     (_) |      | |         | | |
+\ `--. _ __  _| | _____| |__   __ _| | |
+ `--. \ '_ \| | |/ / _ \ '_ \ / _` | | |
+/\__/ / |_) | |   <  __/ |_) | (_| | | |
+\____/| .__/|_|_|\_\___|_.__/ \__,_|_|_|
+      | |                               
+      |_|                               
+
 # spikeball-modeling
 A Spikeball Model written using Forge
 
@@ -8,6 +17,7 @@ Team 2 always has P4 serve
 Touches will always be 3 or under (valid)
 Serves change after each point, rather than until the team loses a point
 On serve, any opposing player can hit the ball (no explicit receiver)
+All rallies will have the maximum number of touches (3) (avoid very long traces)
 
 # Omitted
 Cannot hit ball towards opponents
