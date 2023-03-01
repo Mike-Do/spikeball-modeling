@@ -69,18 +69,18 @@ pred SBValidStates {
     // ball should in one of the positions
     // One team should have possession at all times
     all s: SBState | {
-        // P1.position = North
-        // P2.position = West
-        // P3.position = East
-        // P4.position = South
-        // Team1.server = P1
-        // Team2.server = P4
         (s.ball = Net or s.ball = Ground or s.ball = North or s.ball = South or s.ball = East or s.ball = West)
         (s.possession = Team1 or s.possession = Team2)
 
         s.num_touches >= 0
         s.num_touches <= 3
         (s.is_serving = 0 or s.is_serving = 1)
+    }
+
+    // Make sure score is not none
+    all s: SBState, t: Team | {
+        some s.score[t] and
+        s.score[t] >= 0
     }
 }
 
@@ -93,16 +93,16 @@ pred SBValidStates {
 //     // s.possession = Team2 implies s.serving_team = Team2    
 // }
 
-pred point[pre: SBState, post: SBState] {
-    // if ball touches ground, score for team w/o possession
-    (pre.ball = Ground) implies {
-        // TODO: may have to revisit if error thrown
-        (pre.possession = Team1) => (add[pre.score[Team2], 1] = post.score[Team2]) else (add[pre.score[Team1], 1] = post.score[Team1])
-    }
+// pred point[pre: SBState, post: SBState] {
+//     // if ball touches ground, score for team w/o possession
+//     (pre.ball = Ground) implies {
+//         // TODO: may have to revisit if error thrown
+//         (pre.possession = Team1) => (add[pre.score[Team1], 1] = post.score[Team1]) else (add[pre.score[Team2], 1] = post.score[Team2])
+//     }
 
-    // make sure point has increased for one of the teams (XOR)
-    #{t: Team | pre.score[t] < post.score[t]} = 1
-}
+//     // make sure point has increased for one of the teams (XOR)
+//     #{t: Team | pre.score[t] < post.score[t]} = 1
+// }
 
 pred SBfinalState[s: SBState] {
     // one team reached the winning score
@@ -116,11 +116,13 @@ pred SBfinalState[s: SBState] {
         // s.num_touches[t] <= 0
         // s.num_touches[t] >= 3
     }
+
     s.num_touches >= 0
     s.num_touches <= 3
     
     // ball is on the ground, awarding the final point
     // s.ball = Ground
+    s.is_serving = 1
 }
 
 pred SBvalidTransition[pre: State, post: State] {
@@ -142,6 +144,8 @@ pred SBvalidTransition[pre: State, post: State] {
     (pre.ball = Ground) => (SBgroundTransition[pre, post])
     // pass to team member
     ((pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) and (pre.num_touches < 3) and (pre.is_serving = 0)) => (SBrallyTransition[pre, post])
+    // exceeded 3 touches, foul
+    ((pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) and (pre.num_touches = 3) and (pre.is_serving = 0)) => (SBfoulTransition[pre, post])
 }
 
 // TODO: May need to revisit if overlap between canServe and other predicates, perhaps add a State field to canServe
@@ -152,32 +156,53 @@ pred serveTransition[pre: State, post: State] {
     // TODO: may have to revisit if error thrown
     // (pre.possession = Team1) => post.possession = Team2 else post.possession = Team1
     pre.num_touches = post.num_touches
+
+    // score does not change
+    all t: Team | {
+        pre.score[t] = post.score[t]
+    }
 }
 
 pred SBnetTransition[pre: State, post: State] {
     // if the ball hits the net, then the ball will end up in possession of other team
     (pre.possession = Team1) => {
         // ball changes position
-        post.ball = East or post.ball = South or post.ball = Ground
+        (post.ball = East or post.ball = South or post.ball = Ground)
+        
+        // if ball goes to the ground, preserve possession (avoid double-changing)
+        (post.ball = Ground) => {
+            post.possession = pre.possession
+        } else {
+            // change possession to new team
+            post.possession = Team2
+        }
 
         // reset touches
         post.num_touches = 0
         // post.num_touches[Team1] = 0
         
-        // change possession to new team
-        post.possession = Team2
     } else {
         post.ball = West or post.ball = North or post.ball = Ground
-
         // reset touches
         post.num_touches = 0
         // post.num_touches[Team2] = 0
 
-        // change possession to new team
-        post.possession = Team1
+        // if ball goes to the ground, preserve possession (avoid double-changing)
+        (post.ball = Ground) => {
+            post.possession = pre.possession
+        } else {
+            // change possession to new team
+            post.possession = Team1
+        }
     }
+    
     pre.is_serving = post.is_serving
     pre.num_touches = post.num_touches
+
+    // score does not change
+    all t: Team | {
+        pre.score[t] = post.score[t]
+    }
     // (pre.possession = Team1) => (post.ball = South or post.ball = East or post.ball = Ground) else (post.ball = North or post.ball = West or post.ball = Ground)
 
     // FOR LATER REFERENCE
@@ -187,17 +212,26 @@ pred SBnetTransition[pre: State, post: State] {
 
 pred SBgroundTransition[pre: State, post: State] {
     // the score increases (point), in next state new serve
-    point[pre, post]
-    // poessession changes and ball will in position of server
+    // point[pre, post]
+    // possession changes and ball will in position of server    
     (pre.possession = Team1) => {
+        add[pre.score[Team1], 1] = post.score[Team1]
+        pre.score[Team2] = post.score[Team2]
         post.possession = Team2
         post.serving_team = Team2
         post.ball = Team2.server.position
     } else {
+        add[pre.score[Team2], 1] = post.score[Team2]
+        pre.score[Team1] = post.score[Team1]
         post.possession = Team1
         post.serving_team = Team1
         post.ball = Team1.server.position
     }
+
+    // make sure point has increased for one of the teams (XOR)
+    // #{t: Team | pre.score[t] < post.score[t]} = 1
+    
+    // now serving
     post.is_serving = 1
     pre.num_touches = post.num_touches
 }
@@ -221,6 +255,22 @@ pred SBrallyTransition[pre: State, post: State] {
     
     // serving state does not change
     pre.is_serving = post.is_serving
+    // score does not change
+    all t: Team | {
+         pre.score[t] = post.score[t]
+    }
+}
+
+// foul to exceed 3 touches
+pred SBfoulTransition[pre: State, post: State] {
+    post.ball = Net
+    // serving state does not change
+    pre.is_serving = post.is_serving
+    // score does not change
+    all t: Team | {
+         pre.score[t] = post.score[t]
+    }
+    // pre.num_touches = post.num_touches
 }
 
 pred TransitionStates {
@@ -245,6 +295,7 @@ pred SBSetup {
 
     Team1.server = P1
     Team2.server = P4
+    
     P1.team = Team1
     P2.team = Team1
     P3.team = Team2
@@ -257,4 +308,4 @@ run {
     SBValidStates
     TransitionStates
     SBSetup
-} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for 12 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
