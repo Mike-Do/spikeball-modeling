@@ -6,6 +6,8 @@ States model ball from team possession to team possession.  The ball is always i
 Team 1 always starts with the ball, and P1 always serves
 Team 2 always has P4 serve
 Touches will always be 3 or under (valid)
+Serves change after each point, rather than until the team loses a point
+On serve, any opposing player can hit the ball (no explicit receiver)
 
 # Omitted
 Cannot hit ball towards opponents
