@@ -1,3 +1,4 @@
+```
  _____       _ _        _           _ _ 
 /  ___|     (_) |      | |         | | |
 \ `--. _ __  _| | _____| |__   __ _| | |
@@ -5,7 +6,8 @@
 /\__/ / |_) | |   <  __/ |_) | (_| | | |
 \____/| .__/|_|_|\_\___|_.__/ \__,_|_|_|
       | |                               
-      |_|                               
+      |_|    
+```                           
 
 # spikeball-modeling
 We're modeling spikeball games with 4 players and 2 teams, where each team has 2 players. The players in each team and the position of the players are static. The game ends when either team has won by receiving 2 points.
