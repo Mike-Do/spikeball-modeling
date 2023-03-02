@@ -40,12 +40,6 @@ sig SBState {
 
 // Predicates
 pred SBinitState[s: SBState] {
-    // set positions for the players
-    // P1.position = North
-    // P2.position = West
-    // P3.position = East
-    // P4.position = South
-    
     // both teams have scores of 0
     all t: Team {
         s.score[t] = 0
