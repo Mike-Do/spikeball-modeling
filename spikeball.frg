@@ -53,16 +53,15 @@ pred SBinitState[s: SBState] {
 
     s.is_serving = 1
     s.num_touches = 0
-    s.serving_team = Team1
-    s.ball = North
-    // (s.serving_team = Team1 or s.serving_team = Team2)
     
-    // s.serving_team = Team1 => {
-    //     s.ball = North
-    // } else {
-    //     s.ball = South
-    // }
-    // s.possession = s.serving_team
+    (s.serving_team = Team1 or s.serving_team = Team2)
+    
+    s.serving_team = Team1 => {
+        s.ball = North
+    } else {
+        s.ball = South
+    }
+    s.possession = s.serving_team
 }
 
 
@@ -90,16 +89,11 @@ pred SBValidStates {
 
 pred SBfinalState[s: SBState] {
     // one team reached the winning score
-    // #{t: Team | s.score[t] = 2} = 1
-    s.score[Team2] = 2
-    s.score[Team1] < 2
+    #{t: Team | s.score[t] = 2} = 1
+    #{t: Team | s.score[t] < 2} = 1
     
-    // make sure the score is within bound for both teams
     all t: Team | {
         s.score[t] >= 0
-        s.score[t] <= 2
-        // s.num_touches[t] <= 0
-        // s.num_touches[t] >= 3
     }
 
     s.num_touches >= 0
@@ -119,7 +113,7 @@ pred SBvalidTransition[pre: State, post: State] {
     // no one has won yet (has required score)
     all t: Team {
         pre.score[t] >= 0
-        pre.score[t] < 3
+        pre.score[t] < 2
     }
 
     // TRANSITION based on cases 
