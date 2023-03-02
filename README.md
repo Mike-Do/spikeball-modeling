@@ -8,11 +8,26 @@
       | |                               
       |_|    
 ```                           
-
-# spikeball-modeling
 We're modeling spikeball games with 4 players and 2 teams, where each team has 2 players. The players in each team and the position of the players are static. The game ends when either team has won by receiving 2 points.
+
 We want to explore the different Spikeball games Forge generates given the constraints and the number
 of states.
+
+Below is a visual of the Spikeball court and the positions of the players.
+* P1 is the server for Team 1 and North
+* P2 is West
+* P3 is East
+* P4 is the server for Team 2 and South
+
+```
+       P1 
+       --
+P2    |  |   P3
+       --      
+       P4
+```
+
+
 
 # Model Design Choices 
 
