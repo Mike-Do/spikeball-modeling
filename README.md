@@ -88,14 +88,14 @@ Preds:
 - {SBvalidTransition}
 - {serveTransition>}
 - {SBnetTransition}
-- <SBgroundTransition>
-- <SBrallyTransition>
-- <SBfoulTransition>
-- <TransitionStates>
-- <SBSetup>
+- {SBgroundTransition}
+- {SBrallyTransition}
+- {SBfoulTransition}
+- {TransitionStates}
+- {SBSetup}
 
-<SBinitState>, <SBfinalState>, <SBvalidTransition> together construct the 3 main stages of the game: the start, the transitions between states in the middle, and the final state.
-Since there are several possible transition cases between states, we broke <SBvalidTransition> down to
+{SBinitState}, {SBfinalState}, {SBvalidTransition} together construct the 3 main stages of the game: the start, the transitions between states in the middle, and the final state.
+Since there are several possible transition cases between states, we broke {SBvalidTransition> down to
 the following transition predicates: <serveTransition>, <SBnetTransition>, <SBgroundTransition>, <SBrallyTransition>, <SBfoulTransition>. 
 
 <SBValidStates> specifies the constraints that need to hold for a state to be valid and ensures that all states in the game are valid.
@@ -111,7 +111,5 @@ the following transition predicates: <serveTransition>, <SBnetTransition>, <SBgr
 * No infractions (when a player blocks another player from getting the ball)
 
 <!-- small parrot gif, small height and width, bird-dance.gif -->
-![small parrot gif](
-https://media.giphy.com/media/3o6Zt3ZJL6hIAV6n7W/giphy.gif
-"small parrot gif, small height and width, bird-dance.gif")
+![small parrot gif](bird-dance.gif)
 
