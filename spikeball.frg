@@ -284,9 +284,11 @@ pred SBfoulTransition[pre: State, post: State] {
     pre.is_serving = 0
     post.is_serving = 0
     // score does not change
+    
     all t: Team | {
          pre.score[t] = post.score[t]
     }
+    
     // pre.num_touches = post.num_touches
     
     // serving team stays the same
