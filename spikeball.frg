@@ -197,7 +197,7 @@ pred SBnetTransition[pre: State, post: State] {
 pred SBgroundTransition[pre: State, post: State] {
     // the score increases (point), in next state new serve
     // point[pre, post]
-    // possession changes and ball will in position of server    
+    // possession changes and ball will be in position of server    
    
    (pre.possession = Team1) => {
         add[pre.score[Team1], 1] = post.score[Team1]

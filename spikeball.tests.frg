@@ -29,10 +29,38 @@ test suite for SBinitState {
         East = `East
         West = `West
 
+        // scores are 0, Team1 starts with the ball, ball is in right position, and possession is with Team1
         score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 0
         serving_team = `S0 -> `Team1
         ball = `S0 -> `North
         possession = `S0 -> `Team1
+    }
+
+    example team2StartsWithBall is {some s: SBState | SBinitState[s]} for {
+        // Give bounds to the Sigs
+        SBState = `S0
+        next = `S0 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // scores are 0, Team2 starts with the ball, ball is in right position, and possession is with Team2
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 0
+        serving_team = `S0 -> `Team2
+        ball = `S0 -> `South
+        possession = `S0 -> `Team2
     }
 
     example invalidSBinitState is not {some s: SBState | SBinitState[s]} for {
@@ -55,7 +83,92 @@ test suite for SBinitState {
         East = `East
         West = `West
 
+        // score starts at 1 for Team 2
         score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1
+        ball = `S0 -> `North
+        possession = `S0 -> `Team1
+    }
+
+    // score starts at 1 for Team 1
+    example team1Score1 is not {some s: SBState | SBinitState[s]} for {
+        // Give bounds to the Sigs
+        SBState = `S0
+        next = `S0 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // score starts at 1 for Team 1
+        score = `S0 -> `Team1 -> 1 + `S0 -> `Team2 -> 0
+        serving_team = `S0 -> `Team1
+        ball = `S0 -> `North
+        possession = `S0 -> `Team1
+    }
+
+    //  score out of bounds (we are considering up to 2)
+    example scoreOutOfBounds is not {some s: SBState | SBinitState[s]} for {
+        // Give bounds to the Sigs
+        SBState = `S0
+        next = `S0 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // score starts at 1 for Team 1
+        score = `S0 -> `Team1 -> 3 + `S0 -> `Team2 -> 0
+        serving_team = `S0 -> `Team1
+        ball = `S0 -> `North
+        possession = `S0 -> `Team1
+    }
+
+    // score negative
+    example scoreNegative is not {some s: SBState | SBinitState[s]} for {
+        // Give bounds to the Sigs
+        SBState = `S0
+        next = `S0 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // score starts at 1 for Team 1
+        score = `S0 -> `Team1 -> -1 + `S0 -> `Team2 -> 0
         serving_team = `S0 -> `Team1
         ball = `S0 -> `North
         possession = `S0 -> `Team1
@@ -125,7 +238,203 @@ test suite for SBfoulTransition {
 }
 
 test suite for SBgroundTransition {
-    example validSBgroundTransition is {some pre, post: SBState | SBgroundTransition[pre, post]} for {
-        
+        // Team1 scores, They Serve in post state, and they get possession
+    example team1Scores is {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `Ground + `S1 -> `North
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 1
+        // Score increase for Team 1
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 1 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+
+    // Team2 scores, They Serve in post state, and they get possession
+    example team2Scores is {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team2 Server
+        ball = `S0 -> `Ground + `S1 -> `South
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 1
+        // Score increase for Team 2
+        score = `S0 -> `Team1 -> 1 + `S0 -> `Team2 -> 0 + `S1 -> `Team1 -> 1 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team2 + `S1 -> `Team2
+        possession = `S0 -> `Team2 + `S1 -> `Team2
+    }
+
+    // winning point (Team 1 scores to 2 to win)
+    example team1Wins is {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `Ground + `S1 -> `North
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 1
+        // Score increase for Team 1
+        score = `S0 -> `Team1 -> 1 + `S0 -> `Team2 -> 1+ `S1 -> `Team1 -> 2 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+
+    // INVALID States
+
+    // serving does not toggle to true in post state
+    example invalidServe is not {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `Ground + `S1 -> `North
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 0
+        // Score increase for Team 1
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 1 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+
+    // Team1 scores, They Serve in post state, and but Team2 gets possession
+    example invalidPossession is not {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `Ground + `S1 -> `North
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 1
+        // Score increase for Team 1
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 1 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team2
+    }
+
+    // Team2 scores, They Serve in post state, and but Team1 gets possession
+    example invalidPossession2 is not {some pre, post: SBState | SBgroundTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team2 Server
+        ball = `S0 -> `Ground + `S1 -> `South
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        // Serve in Post State
+        is_serving = `S0 -> 0 + `S1 -> 1
+        // Score increase for Team 2
+        score = `S0 -> `Team1 -> 1 + `S0 -> `Team2 -> 0 + `S1 -> `Team1 -> 1 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team2 + `S1 -> `Team2
+        possession = `S0 -> `Team2 + `S1 -> `Team1
     }
 }
