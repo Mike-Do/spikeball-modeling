@@ -110,9 +110,7 @@ the following transition predicates: {serveTransition}, {SBnetTransition}, {SBgr
 * Serve is always valid (always hits the net, no hitting ground)
 * No infractions (when a player blocks another player from getting the ball)
 
-<!-- small parrot gif, small height and width, bird-dance.gif -->
-<!-- make the above put only 30px by 30px -->
+
 <img src="bird-dance.gif" width="30" height="30" />
-<!-- make super small <p> that says thanks for reviewing -->
 <p style="font-size: 0.5em">Thanks for reviewing!</p>
 
