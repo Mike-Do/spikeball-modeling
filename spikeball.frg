@@ -38,23 +38,27 @@ sig SBState {
     is_serving: one Int
 }
 
-// Predicates
 pred SBinitState[s: SBState] {
     // both teams have scores of 0
     all t: Team {
         s.score[t] = 0
     }
 
+    // start with serving and no touches
     s.is_serving = 1
     s.num_touches = 0
     
+    // either team can start serving
     (s.serving_team = Team1 or s.serving_team = Team2)
     
+    // assign ball to the correct server
     s.serving_team = Team1 => {
         s.ball = North
     } else {
         s.ball = South
     }
+    
+    //
     s.possession = s.serving_team
 }
 

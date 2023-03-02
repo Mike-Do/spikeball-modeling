@@ -655,4 +655,132 @@ test suite for SBnetTransition {
     }
 }
 
-// test suit for rally
+// test suite for rally
+test suite for SBrallyTransition {
+    example validSBrallyTransition is {some pre, post: SBState | SBrallyTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `North + `S1 -> `West
+        
+        // Touches increases by 1
+        num_touches = `S0 -> 0 + `S1 -> 1
+        is_serving = `S0 -> 0 + `S1 -> 0
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 0 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+    
+    example invalidSBrallyTransition is not {some pre, post: SBState | SBrallyTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `North + `S1 -> `West
+        
+        // Touches increases by 1
+        num_touches = `S0 -> 0 + `S1 -> 1
+        is_serving = `S0 -> 0 + `S1 -> 0
+
+        // score changes incorrectly
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 0 + `S1 -> `Team2 -> 2
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+
+    example invalidSBrallyTransition2 is not {some pre, post: SBState | SBrallyTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team1 Server
+        ball = `S0 -> `North + `S1 -> `West
+        
+        // Touches doesn't increase (incorrectly)
+        num_touches = `S0 -> 0 + `S1 -> 0
+        is_serving = `S0 -> 0 + `S1 -> 0
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 0 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+
+
+    example invalidSBrallyTransition3 is not {some pre, post: SBState | SBrallyTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Position switches incorrectly
+        ball = `S0 -> `North + `S1 -> `South
+        
+        // Touches increases by 1
+        num_touches = `S0 -> 0 + `S1 -> 1
+        is_serving = `S0 -> 0 + `S1 -> 0
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 1 + `S1 -> `Team1 -> 0 + `S1 -> `Team2 -> 1
+        serving_team = `S0 -> `Team1 + `S1 -> `Team1
+        possession = `S0 -> `Team1 + `S1 -> `Team1
+    }
+}
