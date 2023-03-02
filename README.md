@@ -53,25 +53,25 @@ Ultimately, we used the default visualization as we spent a lot of our time tryi
 
 # High-level description of Sigs and Preds
 Sigs:
-- <Position> (abstract); represents the possible positions the ball and the players could take
+- {Position} (abstract); represents the possible positions the ball and the players could take
       - Net (extends Position)
       - Ground (extends Position)
       - North (extends Position)
       - South (extends Position)
       - East (extends Position)
       - West (extends Position)
-- <Team> (abstract); represents the teams in the game; each team has a designated server
+- {Team} (abstract); represents the teams in the game; each team has a designated server
       - Team1 (extends Team)
       - Team2 (extends Team)
       - **Field**: `server: one server`
-- <Player> (abstract); represents the players in the game; each player has a team and a position
+- {Player} (abstract); represents the players in the game; each player has a team and a position
       - P1 (extends Team)
       - P2 (extends Team)
       - P3 (extends Team)
       - P4 (extends Team)
       - **Fields**: `team: one Team,
                   position: one Position`
-- <SBState>; represents a state in the game and contains information about the current state in its fields,
+- {SBState}; represents a state in the game and contains information about the current state in its fields,
 such as the score, the serving team, and the ball's position.
       - **Fields**: `next: lone SBState,
                   score: pfunc Team -> Int,
@@ -82,12 +82,12 @@ such as the score, the serving team, and the ball's position.
                   is_serving: one Int`
 
 Preds:
-- <SBinitState>
-- <SBValidStates>
-- <SBfinalState>
-- <SBvalidTransition>
-- <serveTransition>
-- <SBnetTransition>
+- {SBinitState}
+- {SBValidStates}
+- {SBfinalState}
+- {SBvalidTransition}
+- {serveTransition>}
+- {SBnetTransition}
 - <SBgroundTransition>
 - <SBrallyTransition>
 - <SBfoulTransition>
@@ -109,3 +109,9 @@ the following transition predicates: <serveTransition>, <SBnetTransition>, <SBgr
 * No switching positions on serve
 * Serve is always valid (always hits the net, no hitting ground)
 * No infractions (when a player blocks another player from getting the ball)
+
+<!-- small parrot gif, small height and width, bird-dance.gif -->
+![small parrot gif](
+https://media.giphy.com/media/3o6Zt3ZJL6hIAV6n7W/giphy.gif
+"small parrot gif, small height and width, bird-dance.gif")
+
