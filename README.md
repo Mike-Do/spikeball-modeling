@@ -98,11 +98,11 @@ Preds:
 Since there are several possible transition cases between states, we broke {SBvalidTransition} down to
 the following transition predicates: {serveTransition}, {SBnetTransition}, {SBgroundTransition}, {SBrallyTransition}, {SBfoulTransition}. 
 
-<SBValidStates> specifies the constraints that need to hold for a state to be valid and ensures that all states in the game are valid.
+{SBValidStates} specifies the constraints that need to hold for a state to be valid and ensures that all states in the game are valid.
 
-<TransitionStates> calls <SBinitState>, <SBfinalState> and <SBvalidTransition> to bring the different stages together and construct a full game.
+{TransitionStates} calls {SBinitState}, {SBfinalState} and {SBvalidTransition} to bring the different stages together and construct a full game.
 
-<SBSetup> contains the static values in the game, including the positions of the players, the server on each team and players on each team.
+{SBSetup} contains the static values in the game, including the positions of the players, the server on each team and players on each team.
 
 # Omitted (potential Final Project) Features
 * Cannot move 360 degrees after serve
@@ -113,4 +113,6 @@ the following transition predicates: {serveTransition}, {SBnetTransition}, {SBgr
 <!-- small parrot gif, small height and width, bird-dance.gif -->
 <!-- make the above put only 30px by 30px -->
 <img src="bird-dance.gif" width="30" height="30" />
+<!-- make super small <p> that says thanks for reviewing -->
+<p style="font-size: 0.5em">Thanks for reviewing!</p>
 
