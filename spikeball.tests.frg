@@ -438,3 +438,45 @@ test suite for SBgroundTransition {
         possession = `S0 -> `Team2 + `S1 -> `Team1
     }
 }
+
+test suite for SBnetTransition {
+    // Valid
+    // Net to North, from Team 2 to Team 1 possession change, score unchanged
+    example validNetToNorth is {some pre, post: SBState | SBnetTransition[pre, post]} for {
+        // Give bounds to the Sigs
+        SBState = `S0 + `S1
+        next = `S0 -> `S1 + `S1 -> none
+        Team = `Team1 + `Team2
+        Team1 = `Team1
+        Team2 = `Team2
+        Player = `Player1 + `Player2 + `Player3 + `Player4
+        P1 = `Player1
+        P2 = `Player2
+        P3 = `Player3
+        P4 = `Player4
+        Position = `South + `Net + `Ground + `North + `East + `West
+        Net = `Net
+        Ground = `Ground
+        North = `North
+        South = `South
+        East = `East
+        West = `West
+
+        // Net to Team2 Server
+        ball = `S0 -> `Net + `S1 -> `North
+        // Touches Stay the Same
+        num_touches = `S0 -> 0 + `S1 -> 0
+        is_serving = `S0 -> 0 + `S1 -> 0
+        score = `S0 -> `Team1 -> 0 + `S0 -> `Team2 -> 0 + `S1 -> `Team1 -> 0 + `S1 -> `Team2 -> 0
+        serving_team = `S0 -> `Team2 + `S1 -> `Team2
+        possession = `S0 -> `Team2 + `S1 -> `Team1
+    }
+
+    // Invalid
+    // Net to ground change possession
+    // Num touches does not reset to 0
+    // Serving in next state
+    // Score randomly changes from net to ground
+}
+
+// test suit for rally
