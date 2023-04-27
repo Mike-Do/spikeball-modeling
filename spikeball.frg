@@ -1,4 +1,4 @@
-#lang forge/bsl
+#lang forge
 
 // Position Sigs
 abstract sig Position {}
