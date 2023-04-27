@@ -309,10 +309,13 @@ pred SBSetup {
     P4.team = Team2
 }
 
-
-run {
-    // traces
+pred traces {
     SBValidStates
     TransitionStates
     SBSetup
+}
+
+
+run {
+    traces
 } for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
