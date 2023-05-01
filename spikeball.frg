@@ -1,4 +1,5 @@
 #lang forge
+option problem_type temporal
 
 // Position Sigs
 abstract sig Position {}
@@ -314,7 +315,7 @@ pred traces {
     SBSetup
 }
 
-
 run {
     traces
 } for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+
