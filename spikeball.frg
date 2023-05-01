@@ -58,7 +58,6 @@ pred SBinitState[s: SBState] {
         s.ball = South
     }
     
-    //
     s.possession = s.serving_team
 }
 
