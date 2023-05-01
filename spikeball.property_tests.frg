@@ -35,9 +35,13 @@ pred team_two_always_wins[s: SBState] {
 }
 
 -- The team that serves always wins [UNSAT]
-pred serving_team_always_wins[s: SBState] {
+pred serving_team_always_wins {
     always {
-        eventually s.score[s.serving_team] = 2
+        eventually {
+            some s: SBState {
+                s.score[s.serving_team] = 2
+            }
+        }
     }
 }
 
@@ -100,12 +104,12 @@ test expect {
     noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     
     // theorem tests
-    alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     
     // unsat tests [ NOT WORKING :( ]
     // teamOneAlwaysWins: {traces implies team_one_always_wins} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
     // teamTwoAlwaysWins: {traces implies team_two_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    // servingTeamAlwaysWins: {traces implies serving_team_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    // servingTeamAlwaysWins: {traces implies serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
     // nonServingTeamAlwaysWins: {traces implies non_serving_team_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
 }
