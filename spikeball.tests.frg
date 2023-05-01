@@ -1,7 +1,8 @@
 #lang forge
-option problem_type temporal
-
 open "spikeball.frg"
+// option problem_type temporal
+
+
 
 test suite for TransitionStates {
     assert SBValidStates is necessary for TransitionStates

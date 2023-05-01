@@ -59,6 +59,7 @@ pred SBinitState[s: SBState] {
         s.ball = South
     }
     
+    //
     s.possession = s.serving_team
 }
 
@@ -318,4 +319,3 @@ pred traces {
 run {
     traces
 } for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
-
