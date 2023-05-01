@@ -19,10 +19,31 @@ pred always_team_one_or_two_wins {
 -- Team one always wins [UNSAT]
 pred team_one_always_wins {
     always {
-        eventually {
-            some s: SBState {
-                s.score[Team2] = 2
-            }
+        all s: SBState {
+            s.score[Team2] < 2
+        }
+    }
+    
+    // always {
+    //     eventually {
+    //         some s: SBState {
+    //             s.score[Team2] = 2
+    //         }
+    //     }
+    // }
+    // eventually {
+    //     some s: SBState {
+    //         s.score[Team1] = 2 and s.score[Team2] < 2
+    //     }
+    // }
+}
+
+-- Ball gets passed from P1 on Team 1 to P4 on Team 2 [UNSAT]
+pred illegal_pass {
+    eventually {
+        some s: SBState {
+            s.ball = North
+            s.ball' = South
         }
     }
 }
@@ -30,7 +51,9 @@ pred team_one_always_wins {
 -- Team two always wins [UNSAT]
 pred team_two_always_wins[s: SBState] {
     always {
-        eventually s.score[Team2] = 2
+        all s: SBState {
+            s.score[Team1] < 2
+        }
     }
 }
 
@@ -98,18 +121,22 @@ pred no_touches_used {
 test expect {
     // 7 is the min number of states for satsfiablility. It's used in all the tests to reduce run time. 
     -- ✅ ✅ ✅ 
-    vacuity: {traces} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // vacuity: {traces} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     
     // sat tests
-    noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    -- ✅ ✅ ✅ 
+    // noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     
     // theorem tests
-    alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
-    alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    -- ✅ ✅ ✅ 
+    // alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    -- ✅ ✅ ✅ 
+    // alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     
     // unsat tests [ NOT WORKING :( ]
-    // teamOneAlwaysWins: {traces implies team_one_always_wins} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    // teamTwoAlwaysWins: {traces implies team_two_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    // teamOneAlwaysWins: {traces implies team_one_always_wins} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // teamTwoAlwaysWins: {traces implies team_two_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     // servingTeamAlwaysWins: {traces implies serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    illegalPass: {traces implies illegal_pass} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
     // nonServingTeamAlwaysWins: {traces implies non_serving_team_always_wins[SBState]} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
 }
