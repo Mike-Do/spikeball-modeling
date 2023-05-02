@@ -120,17 +120,26 @@ pred players_same_position {
 }
 
 
-// The serving team doesn’t stay the same throughout the game -- Mike✅ 
+// The serving team doesn’t stay the same throughout the game -- Mike
 pred serving_team_changes {
-    // eventually {
-    //     some s: SBState {
-    //         s.serving_team != s'.serving_team'
-    //     }
-    // }
+    eventually {
+        some s: SBState {
+            s.serving_team != s'.serving_team'
+        }
+    }
 }
 
 
-// Check that it’s possible for both teams get at least one point (instead of one team gets 2 points and the other team has no point)s -- Mike✅ 
+// Check that it’s possible for both teams get at least one point (instead of one team gets 2 points and the other team has no point)s -- Mike
+pred at_least_one_point {
+    always {
+        eventually {
+            some s: SBState {
+                s.score[Team1] = 1 and s.score[Team2] = 1
+            }
+        }
+    }
+}
 
 test expect {
     // THE TESTS THAT HAVE -- IN FRONT HAVE BEEN TESTED AND PASS!!!
@@ -140,6 +149,8 @@ test expect {
     
     // sat tests
     -- noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // servingTeamChanges: {traces implies serving_team_changes} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
 
     // // theorem tests
     -- alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
