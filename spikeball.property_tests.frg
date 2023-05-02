@@ -100,10 +100,17 @@ pred no_touches_used {
 
 // If a team gets a score, it's always from the net to the ground
     --Haley
+pred score_on_net_to_ground {
+    
+
+}
 
 
 // Players stay in their cardinal positions (P1 always North…
     --Haley
+pred players_same_position {
+
+}
 
 
 // The serving team doesn’t stay the same throughout the game -- Mike✅ 
