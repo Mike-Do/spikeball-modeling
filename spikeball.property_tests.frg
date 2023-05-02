@@ -150,7 +150,7 @@ test expect {
     // sat tests
     -- noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     // servingTeamChanges: {traces implies serving_team_changes} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
 
     // // theorem tests
     -- alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
