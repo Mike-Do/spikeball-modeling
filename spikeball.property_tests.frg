@@ -101,8 +101,23 @@ pred no_touches_used {
 // If a team gets a score, it's always from the net to the ground [THEOREM]
     --Haley
 pred score_on_net_to_ground {
-
-
+    // in some state, the ball is on the ground
+    // check if Team1 or Team2 scored
+    // in the next state, the ball is either North or South, North if Team1 scored, South if Team2 scored
+    some s, snext: SBState {
+        snext = s.next
+        
+        some t: Team {
+            (add[s.score[t], 1] = snext.score[t]) => {
+                s.ball = Ground
+                (t = Team1) => {
+                    snext.ball = North
+                } else {
+                    snext.ball = South
+                }
+            }
+        }
+    }
 }
 
 
@@ -151,8 +166,9 @@ test expect {
     -- noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     // servingTeamChanges: {traces implies serving_team_changes} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     // atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // scoreOnNetToGround: {traces implies score_on_net_to_ground} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
 
-    // // theorem tests
+    // theorem tests
     -- alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     -- alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     -- playerSamePosition: {traces implies players_same_position} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
