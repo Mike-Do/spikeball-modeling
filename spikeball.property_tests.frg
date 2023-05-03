@@ -157,26 +157,25 @@ pred at_least_one_point {
 }
 
 test expect {
-    // THE TESTS THAT HAVE -- IN FRONT HAVE BEEN TESTED AND PASS!!!
-
-    // 7 is the min number of states for satsfiablility. It's used in all the tests to reduce run time. 
-    -- vacuity: {traces} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    // NOTE: 7 is the min number of states for satsfiablility. It's used in all the tests to reduce run time. 
+    vacuity: {traces} for 7 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     
     // sat tests
-    -- noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    // servingTeamChanges: {traces implies serving_team_changes} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    // atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    // scoreOnNetToGround: {traces implies score_on_net_to_ground} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-
+    noTouchesUsed: {traces implies no_touches_used} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    servingTeamChanges: {traces implies serving_team_changes} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    atLeastOnePoint: {traces implies at_least_one_point} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    
     // theorem tests
-    -- alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
-    -- alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
-    -- playerSamePosition: {traces implies players_same_position} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    alwaysExistsWinningTeam: {traces implies always_team_one_or_two_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    alwaysMaximizeTouches: {traces implies max_3_touches} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    playerSamePosition: {traces implies players_same_position} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    scoreOnGroundToServer: {traces implies score_on_ground_to_server} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+
     
     // unsat tests
-    -- teamOneAlwaysWins: {traces and team_one_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    -- teamTwoAlwaysWins: {traces and team_two_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    -- servingTeamAlwaysWins: {traces and serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    -- nonServingTeamAlwaysWins: {traces and non_serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
-    -- illegalPass: {traces and illegal_pass} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    teamOneAlwaysWins: {traces and team_one_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    teamTwoAlwaysWins: {traces and team_two_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    servingTeamAlwaysWins: {traces and serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    nonServingTeamAlwaysWins: {traces and non_serving_team_always_wins} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
+    illegalPass: {traces and illegal_pass} for exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is unsat
 }
