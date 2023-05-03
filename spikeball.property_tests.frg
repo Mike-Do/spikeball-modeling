@@ -100,7 +100,7 @@ pred no_touches_used {
 
 // If a team gets a score, it's always from the net to the ground [THEOREM]
     --Haley
-pred score_on_net_to_ground {
+pred score_on_ground_to_server {
     // in some state, the ball is on the ground
     // check if Team1 or Team2 scored
     // in the next state, the ball is either North or South, North if Team1 scored, South if Team2 scored
