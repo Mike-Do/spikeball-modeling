@@ -1,5 +1,5 @@
 #lang forge
-option problem_type temporal
+// option problem_type temporal
 
 // Position Sigs
 abstract sig Position {}
@@ -116,8 +116,8 @@ pred SBvalidTransition[pre: State, post: State] {
     }
 
     // TRANSITION based on cases 
-    // If serving, ball hits net!
-    (pre.is_serving = 1) => (serveTransition[pre, post])
+    // If serving, ball hits net or hits the ground (1 attempt allowed)
+    (pre.is_serving = 1) => (validServeTransition[pre, post] or invalidServeTransition[pre, post])
     // if ball hits the net
     (pre.ball = Net) => (SBnetTransition[pre, post])
     // hits the ground
@@ -128,7 +128,8 @@ pred SBvalidTransition[pre: State, post: State] {
     ((pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) and (pre.num_touches = 3) and (pre.is_serving = 0)) => (SBfoulTransition[pre, post])
 }
 
-pred serveTransition[pre: State, post: State] {
+-- NEW 🎾
+pred validServeTransition[pre: State, post: State] {
     // hit to the net
     post.ball = Net
     // is_serving is turns false, and possession stays the same
@@ -144,6 +145,27 @@ pred serveTransition[pre: State, post: State] {
 
     // serving team stays the same
     pre.serving_team = post.serving_team
+}
+
+-- NEW 🎾
+pred invalidServeTransition[pre: State, post: State] {
+    // hit to the ground
+    post.ball = Ground
+    
+    // is_serving is true (for the other team to serve), and possession goes to the other team
+    pre.possession != post.possession
+    post.is_serving = 1
+    
+    // number of touches stay the same
+    pre.num_touches = post.num_touches
+
+    // score does not change
+    all t: Team | {
+        pre.score[t] = post.score[t]
+    }
+
+    // serving team changes to the other team
+    pre.serving_team != post.serving_team
 }
 
 pred SBnetTransition[pre: State, post: State] {
@@ -202,7 +224,7 @@ pred SBgroundTransition[pre: State, post: State] {
         // post.possession = Team1
     }
 
-    // the winning team keeps serving
+    // the winning team keeps serving (preserves serving team)
     (pre.serving_team = Team1) => {
         (pre.possession = Team1) => {
             post.serving_team = Team1
@@ -260,7 +282,7 @@ pred SBrallyTransition[pre: State, post: State] {
     pre.serving_team = post.serving_team
 }
 
--- NEW
+-- NEW 🎾
 pred SBrallyToGroundTransition[pre: State, post: State] {
     // from team member to ground
     // posession changes
@@ -284,7 +306,7 @@ pred SBrallyToGroundTransition[pre: State, post: State] {
     pre.serving_team = post.serving_team
 }
 
--- NEW
+-- NEW 🎾
 pred SBrallyToNet[pre: State, post: State] {
     // possession does not change (posession to other team handled by net transition)
     pre.possession = post.possession
@@ -365,4 +387,4 @@ pred traces {
 
 run {
     traces
-} for 10 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
