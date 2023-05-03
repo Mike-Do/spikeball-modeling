@@ -86,7 +86,7 @@ Preds:
 - {SBValidStates}
 - {SBfinalState}
 - {SBvalidTransition}
-- {serveTransition>}
+- {serveTransition}
 - {SBnetTransition}
 - {SBgroundTransition}
 - {SBrallyTransition}
