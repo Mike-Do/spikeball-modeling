@@ -248,7 +248,7 @@ pred SBrallyTransition[pre: State, post: State] {
     (pre.ball = East) => (post.ball = South)   
     
     // serving state does not change
-    pre.is_serving = 0
+    pre.is_serving = 0 
     post.is_serving = 0
 
     // score does not change
