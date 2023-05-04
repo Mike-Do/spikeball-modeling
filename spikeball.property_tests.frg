@@ -98,10 +98,10 @@ pred no_touches_used {
 }
 
 
-// If a team gets a score, it's always from the net to the ground [THEOREM]
+// If a team gets a score, it's always from the ground to a person [THEOREM]
     --Haley
 pred score_on_net_to_ground {
-
+    
 
 }
 
