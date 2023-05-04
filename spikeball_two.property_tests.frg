@@ -60,5 +60,4 @@ test expect {
     serverToGround: {traces and server_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     rallyToGround: {traces and rally_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
     rallyToNet: {traces and rally_to_net} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-
 }
