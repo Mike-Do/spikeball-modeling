@@ -1,15 +1,15 @@
 #lang forge
-open "spikeball.frg"
-option problem_type temporal
+open "spikeball_two.frg"
+// option problem_type temporal
 option max_tracelength 40
 
 pred server_to_ground {
     // there exists some state where in the pre the is_serving flag is 1 and in the post the ball is on ground
-    some pre, post: SBState {
-        post = pre.next
+    some pre: SBState {
+        SBvalidTransition[pre, pre.next]
         pre.is_serving = 1
         pre.ball = pre.serving_team.server.position 
-        post.ball = Ground
+        pre.next.ball = North
     }
 }
 

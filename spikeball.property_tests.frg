@@ -12,7 +12,6 @@ pred always_team_one_or_two_wins {
                 s.score[Team1] = 2 or s.score[Team2] = 2
             }
         }
-        
     }
 }
 
