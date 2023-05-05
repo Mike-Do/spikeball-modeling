@@ -59,7 +59,7 @@ pred SBinitState[s: SBState] {
         s.ball = South
     }
     
-    //
+    // assign possession to the correct serving team
     s.possession = s.serving_team
 }
 
@@ -152,9 +152,11 @@ pred invalidServeTransition[pre: State, post: State] {
     // hit to the ground
     post.ball = Ground
     
-    // is_serving is true (for the other team to serve), and possession goes to the other team
+    // switch possession
     pre.possession != post.possession
-    post.is_serving = 1
+    
+    // is_serving triggered again in ground to server transition
+    post.is_serving = 0
     
     // number of touches stay the same
     pre.num_touches = post.num_touches
@@ -249,7 +251,9 @@ pred SBgroundTransition[pre: State, post: State] {
     
     // now serving
     post.is_serving = 1
-    pre.num_touches = post.num_touches
+    
+    // reset touches
+    post.num_touches = 0
 }
 
 pred SBrallyTransition[pre: State, post: State] {
