@@ -3,6 +3,7 @@ open "spikeball_two.frg"
 // option problem_type temporal
 // option max_tracelength 40
 
+-- invokes unsuccessful serve (from server to ground instead of to net)
 pred server_to_ground {
     // there exists some state where in the pre the is_serving flag is 1 and in the post the ball is on ground
     some pre, post: SBState {
@@ -46,6 +47,13 @@ pred forced_foul {
         (pre.num_touches = 3) => {
             post.ball = Net
         }
+    }
+}
+
+-- the servers on both teams stay the same throughout the game (UNSAT)
+pred server_always_same {
+    all s: SBState {
+        
     }
 }
 
