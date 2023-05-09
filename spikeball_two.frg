@@ -12,7 +12,7 @@ one sig West extends Position {}
 
 // Team Sigs
 abstract sig Team {
-    server: one Player
+    // server: one Player
 }
 one sig Team1 extends Team {}
 one sig Team2 extends Team {}
@@ -36,6 +36,7 @@ sig SBState {
     ball: one Position, // the position of the ball
     possession: one Team,
     serving_team: one Team,
+    server: pfunc Team -> Player,
     is_serving: one Int
 }
 
@@ -58,6 +59,10 @@ pred SBinitState[s: SBState] {
     } else {
         s.ball = South
     }
+
+    // initial servers for the teams
+    s.server[Team1] = P1
+    s.server[Team2] = P4
     
     // assign possession to the correct serving team
     s.possession = s.serving_team
@@ -77,6 +82,8 @@ pred SBValidStates {
         s.num_touches <= 3
         (s.is_serving = 0 or s.is_serving = 1)
         (s.serving_team = Team1 or s.serving_team = Team2)
+        (s.server[Team1] = P1 or s.server[Team1] = P2)
+        (s.server[Team2] = P3 or s.server[Team2] = P4)
     }
 
     // Make sure score is not none
@@ -141,6 +148,9 @@ pred validServeTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
         pre.score[t] = post.score[t]
+
+        // server stays the same
+        pre.server[t] = post.server[t]
     }
 
     // serving team stays the same
@@ -154,7 +164,7 @@ pred invalidServeTransition[pre: State, post: State] {
     
     // switch possession
     pre.possession != post.possession
-    
+
     // is_serving triggered again in ground to server transition
     post.is_serving = 0
     
@@ -164,10 +174,17 @@ pred invalidServeTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
         pre.score[t] = post.score[t]
+
+        // server stays the same
+        pre.server[t] = post.server[t]
     }
 
     // serving team changes to the other team
-    pre.serving_team != post.serving_team
+    // pre.serving_team != post.serving_team
+
+    // serving team doesn't change (will change in groundTransition)
+    pre.serving_team = post.serving_team
+    
 }
 
 pred SBnetTransition[pre: State, post: State] {
@@ -183,7 +200,6 @@ pred SBnetTransition[pre: State, post: State] {
             // change possession to new team
             post.possession = Team2
         }
-
         // reset touches
         post.num_touches = 0        
     } else {
@@ -208,10 +224,14 @@ pred SBnetTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
         pre.score[t] = post.score[t]
+
+        // server stays the same
+        pre.server[t] = post.server[t]
     }
 
     // serving team stays the same
     pre.serving_team = post.serving_team
+    
 }
 
 pred SBgroundTransition[pre: State, post: State] {
@@ -230,22 +250,41 @@ pred SBgroundTransition[pre: State, post: State] {
     (pre.serving_team = Team1) => {
         (pre.possession = Team1) => {
             post.serving_team = Team1
-            post.ball = Team1.server.position
+            post.ball = (post.server[Team1]).position
+            // post.ball = Team1.server.position
             post.possession = Team1
+
+            // server stays the same
+            pre.server[Team1] = post.server[Team1]
+            pre.server[Team2] = post.server[Team2]
         } else {
             post.serving_team = Team2
-            post.ball = Team2.server.position
+            post.ball = (post.server[Team2]).position
+            //post.ball = Team2.server.position
             post.possession = Team2
+            --SWAP SERVE
+            // swap servers here
+            pre.server[Team1] = post.server[Team1]
+            pre.server[Team2] != post.server[Team2]
         }
     } else {
         (pre.possession = Team2) => {
             post.serving_team = Team2
-            post.ball = Team2.server.position
+            post.ball = (post.server[Team2]).position
+            // post.ball = Team2.server.position
             post.possession = Team2
+            // server stays the same
+            pre.server[Team1] = post.server[Team1]
+            pre.server[Team2] = post.server[Team2]
         } else {
             post.serving_team = Team1
-            post.ball = Team1.server.position
+            post.ball = (post.server[Team1]).position
+            // post.ball = Team1.server.position
             post.possession = Team1
+            --SWAP SERVE
+            // swap servers here
+            pre.server[Team1] != post.server[Team1]
+            pre.server[Team2] = post.server[Team2]
         }
     }
     
@@ -280,6 +319,9 @@ pred SBrallyTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
+
+         // server stays the same
+         pre.server[t] = post.server[t]
     }
 
     // serving team stays the same
@@ -298,6 +340,9 @@ pred SBrallyToGroundTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
+
+         // server stays the same
+         pre.server[t] = post.server[t]
     }
     
     // The ball is on the Ground in the post state
@@ -308,6 +353,7 @@ pred SBrallyToGroundTransition[pre: State, post: State] {
 
     // serving team stays the same
     pre.serving_team = post.serving_team
+
 }
 
 -- NEW 🎾
@@ -321,6 +367,9 @@ pred SBrallyToNet[pre: State, post: State] {
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
+
+         // server stays the same
+         pre.server[t] = post.server[t]
     }
     
     // ball is on net in next state
@@ -344,6 +393,9 @@ pred SBfoulTransition[pre: State, post: State] {
     // score does not change
     all t: Team | {
          pre.score[t] = post.score[t]
+         
+         // server stays the same
+         pre.server[t] = post.server[t]
     }
     
     // serving team stays the same
@@ -374,9 +426,10 @@ pred SBSetup {
     P3.position = East
     P4.position = South
 
-    Team1.server = P1
-    Team2.server = P4
-    
+    --Can't be un setup because it's not always going to be true
+    // Team1.server = P1
+    // Team2.server = P4
+
     P1.team = Team1
     P2.team = Team1
     P3.team = Team2
@@ -391,4 +444,4 @@ pred traces {
 
 run {
     traces
-} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
+} for 80 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear}
