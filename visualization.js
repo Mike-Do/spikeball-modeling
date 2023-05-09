@@ -80,7 +80,7 @@ function makeP4() {
 
 function makeNet() {
     const obj = new Circle({
-        radius: 20,
+        radius: 25,
         borderColor: "black",
         color: "gray",
         fontSize: 16
@@ -244,5 +244,5 @@ stage.render(svg, document)
 // resize svg
 const svgContainer = document.getElementById('svg-container')
 // NOTE: make 1100% for 40 states, and 2600% for 80 states for Spikeball 1 and Spikeball 2
-svgContainer.getElementsByTagName('svg')[0].style.height = numStates == 40 ? '1100%' : '2600%'
+svgContainer.getElementsByTagName('svg')[0].style.height = numStates == 40 ? '1300%' : '2600%'
 svgContainer.getElementsByTagName('svg')[0].style.width = '100%'
