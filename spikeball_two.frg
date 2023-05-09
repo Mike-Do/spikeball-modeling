@@ -264,8 +264,8 @@ pred SBgroundTransition[pre: State, post: State] {
             post.possession = Team2
             --SWAP SERVE
             // swap servers here
-            pre.server[Team1] = post.server[Team1]
-            pre.server[Team2] != post.server[Team2]
+            pre.server[Team1] != post.server[Team1]
+            pre.server[Team2] = post.server[Team2]
         }
     } else {
         (pre.possession = Team2) => {
@@ -283,8 +283,8 @@ pred SBgroundTransition[pre: State, post: State] {
             post.possession = Team1
             --SWAP SERVE
             // swap servers here
-            pre.server[Team1] != post.server[Team1]
-            pre.server[Team2] = post.server[Team2]
+            pre.server[Team1] = post.server[Team1]
+            pre.server[Team2] != post.server[Team2]
         }
     }
     
