@@ -47,7 +47,7 @@ We spent a lot of time playing around with the different constraints and rules w
 
 When interpreting the Sterling output, the most important part is seeing how the `ball` field changes, to see how rallies, serving, and hitting to the net operate. You should see serves to either the net or the ground. In the case that it hits the net, it would either result in hitting the ground or the start of a perfect 3-touch rally. Due to using the maximum of 3 touches each time, the points are always awarded when the ball transitions from the net to the ground. You will also see that, in each state, each team has their own score.
 
-To make the long traces easier to interpret, we created a ✨custom visualizer in Javascript!
+To make the long traces easier to interpret, we created a ✨custom visualizer✨ in Javascript!
 
 
 # High-level description of Sigs and Preds
