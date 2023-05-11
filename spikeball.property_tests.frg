@@ -72,7 +72,7 @@ pred non_serving_team_always_wins {
 }
 
 
-// The game will always maximum 3 touches (never less than 3 touches) (SARAH)
+// The game will always maximum 3 touches (never less than 3 touches) [THEOREM]
 pred max_3_touches {
     always {
         eventually {
@@ -84,7 +84,7 @@ pred max_3_touches {
 }
 
 
-// Check that it’s possible for both teams to have 0 touches at the end of the game (SARAH)
+// Check that it’s possible for both teams to have 0 touches at the end of the game [SAT]
 pred no_touches_used {
     always {
         eventually {
@@ -98,11 +98,7 @@ pred no_touches_used {
 
 
 // If a team gets a score, it's always from the ground to a person [THEOREM]
-    --Haley
 pred score_on_ground_to_server {
-    // in some state, the ball is on the ground
-    // check if Team1 or Team2 scored
-    // in the next state, the ball is either North or South, North if Team1 scored, South if Team2 scored
     some s, snext: SBState {
         snext = s.next
         
@@ -121,7 +117,6 @@ pred score_on_ground_to_server {
 
 
 // Players stay in their cardinal positions (P1 always North…) [THEOREM]
-    --Haley
 pred players_same_position {
      always {
         some p1, p2, p3, p4: Player {
@@ -134,7 +129,7 @@ pred players_same_position {
 }
 
 
-// The serving team doesn’t stay the same throughout the game -- Mike
+// The serving team doesn’t stay the same throughout the game [SAT]
 pred serving_team_changes {
     eventually {
         some s: SBState {
@@ -144,7 +139,7 @@ pred serving_team_changes {
 }
 
 
-// Check that it’s possible for both teams get at least one point (instead of one team gets 2 points and the other team has no point)s -- Mike
+// Check that it’s possible for both teams get at least one point (instead of one team gets 2 points and the other team has no point)s [SAT]
 pred at_least_one_point {
     always {
         eventually {
