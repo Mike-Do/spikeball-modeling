@@ -11,9 +11,7 @@ one sig East extends Position {}
 one sig West extends Position {}
 
 // Team Sigs
-abstract sig Team {
-    // server: one Player
-}
+abstract sig Team {}
 one sig Team1 extends Team {}
 one sig Team2 extends Team {}
 
@@ -420,15 +418,11 @@ pred TransitionStates {
 }
 
 pred SBSetup {
-    // define setup!
+    // define setup of static values throughout the game
     P1.position = North
     P2.position = West
     P3.position = East
     P4.position = South
-
-    --Can't be un setup because it's not always going to be true
-    // Team1.server = P1
-    // Team2.server = P4
 
     P1.team = Team1
     P2.team = Team1

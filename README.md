@@ -37,18 +37,17 @@ The fields in the state `sig` allow for most of the logic that drives the game:
 * `is_serving`: is_serving allows us to enforce the behavior of the server after a point is awarded
 * `serving_team`: serving_team allows us to track which team is serving
 * `num_touches`: num_touches allows us to enforce the maximum number of touches in a rally
+* `server`: server allows us to keep track of who is the server on a given team at each state and switch servers at certain points of the game
 
 We spent a lot of time playing around with the different constraints and rules we wanted to enforce. When we attempted to model the nitty-gritty nuances of the game, our traces became very long and difficult to interpret. Therefore, we enforces the following abstractions to ensure easier interpretation of the traces yet still retain the essence of the game:
 * To contrain the number of traces, we enforced that the maximum number of touches in a rally is 3, and the team to get to 2 points first wins the game.
-* When a team is serving, the ball will always be hit to the net.
 * The winning team will always continue serving until the opposing team wins a point. **(true to the real game!)**
-* Rallies will always be **perfect** (i.e. the team with possession will always use the maximum of 3 touches to hit the ball to the net). **(skilled players!)**
-* Each team has a designated server, and players do not swap cardinal positions.
-* On serve, there is no designated server, any opposing player can hit the ball to start a rally.
+* Players do not swap cardinal positions.
+* On serve, there is no designated receiver, any player on the opposing team can hit the ball to start a rally.
 
-When interpreting the Sterling output, the most important part is seeing how the `ball` field changes, to see how rallies, serving, and hitting to the net operate. You should see serves to the net, which either result in hitting the ground or the start of a perfect 3-touch rally. Due to using the maximum of 3 touches each time, the points are always awareded when the ball transitions from the net to the ground. You will also see that, in each state, each team has their own score.
+When interpreting the Sterling output, the most important part is seeing how the `ball` field changes, to see how rallies, serving, and hitting to the net operate. You should see serves to either the net or the ground. In the case that it hits the net, it would either result in hitting the ground or the start of a perfect 3-touch rally. Due to using the maximum of 3 touches each time, the points are always awarded when the ball transitions from the net to the ground. You will also see that, in each state, each team has their own score.
 
-Ultimately, we used the default visualization as we spent a lot of our time trying to figure out the constraints and rules we wanted to enforce whil balancing the complexity and length of the traces. However, if we were to continue this as a final project, we would definitely create a custom visualization to make the traces easier to interpret!
+To make the long traces easier to interpret, we created a ✨custom visualizer in Javascript!
 
 
 # High-level description of Sigs and Preds
@@ -63,7 +62,6 @@ Sigs:
 - {Team} (abstract); represents the teams in the game; each team has a designated server
       - Team1 (extends Team)
       - Team2 (extends Team)
-      - **Field**: `server: one server`
 - {Player} (abstract); represents the players in the game; each player has a team and a position
       - P1 (extends Team)
       - P2 (extends Team)
@@ -73,12 +71,14 @@ Sigs:
                   position: one Position`
 - {SBState}; represents a state in the game and contains information about the current state in its fields,
 such as the score, the serving team, and the ball's position.
-      - **Fields**: `next: lone SBState,
+      - **Fields**: 
+                  `next: lone SBState,
                   score: pfunc Team -> Int,
                   num_touches: one Int,
                   ball: one Position,
                   possession: one Team,
                   serving_team: one Team,
+                  server: pfunc Team -> Player,
                   is_serving: one Int`
 
 Preds:
@@ -86,30 +86,41 @@ Preds:
 - {SBValidStates}
 - {SBfinalState}
 - {SBvalidTransition}
-- {serveTransition}
+- {validServeTransition}
+- {invalidServeTransition}
 - {SBnetTransition}
 - {SBgroundTransition}
 - {SBrallyTransition}
+- {SBrallyToGroundTransition}
+- {SBrallyToNet}
 - {SBfoulTransition}
 - {TransitionStates}
 - {SBSetup}
+- {traces}
+
+{traces} captures the entire game by calling {SBValidStates}, {TransitionStates}, and {SBSetup}.
 
 {SBinitState}, {SBfinalState}, {SBvalidTransition} together construct the 3 main stages of the game: the start, the transitions between states in the middle, and the final state.
+
 Since there are several possible transition cases between states, we broke {SBvalidTransition} down to
-the following transition predicates: {serveTransition}, {SBnetTransition}, {SBgroundTransition}, {SBrallyTransition}, {SBfoulTransition}. 
+the following transition predicates: {validServeTransition}, {invalidServeTransition}, {SBnetTransition}, {SBgroundTransition}, {SBrallyTransition}, {SBrallyToGroundTransition}, {SBrallyToNet}, {SBfoulTransition}. 
 
 {SBValidStates} specifies the constraints that need to hold for a state to be valid and ensures that all states in the game are valid.
 
 {TransitionStates} calls {SBinitState}, {SBfinalState} and {SBvalidTransition} to bring the different stages together and construct a full game.
 
-{SBSetup} contains the static values in the game, including the positions of the players, the server on each team and players on each team.
+{SBSetup} contains the static values in the game, including the positions of the players and the players on each team.
 
-# Omitted (potential Final Project) Features
+# New Features (compared to Curiosity Modeling)
+We added the following new features to our model to make it a more accurate representation of real life Spikeball games:
+- When a team is serving, the ball can either hit the net or the ground (In Curiosity Modeling, the ball could only hit the net).
+- Rallies can take either 1, 2 or 3 touches (In Curiosity Modeling, the rallies always used up all 3 touches).
+- The server on a team switches to the other player when the team started a serve but lost the point (In Curiosity Modeling, the servers on the teams were static throughout the game).
+- Custom visualizer!! (We used the default visualization in Curiosity Modeling)
+
+# Omitted Features
 * Cannot move 360 degrees after serve
-* No switching positions on serve
-* Serve is always valid (always hits the net, no hitting ground)
 * No infractions (when a player blocks another player from getting the ball)
-
 
 <img src="bird-dance.gif" width="30" height="30" />
 <p style="font-size: 0.5em">Thanks for reviewing!</p>
