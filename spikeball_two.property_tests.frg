@@ -74,15 +74,14 @@ pred server_changes_only_when_possession_changes {
 
 
 test expect {
-    // vacuity: {traces} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    vacuity: {traces} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
 
     // // theorem tests
-    // forcedFoul: {traces implies forced_foul} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
+    forcedFoul: {traces implies forced_foul} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     switchServer: {traces implies server_changes} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     switchServerOnlyWhenSwitchPossession: {traces implies server_changes_only_when_possession_changes} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is theorem
     // // sat tests
-    // serverToGround: {traces and server_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    // rallyToGround: {traces and rally_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    // rallyToNet: {traces and rally_to_net} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
-    
+    serverToGround: {traces and server_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    rallyToGround: {traces and rally_to_ground} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
+    rallyToNet: {traces and rally_to_net} for 40 SBState, exactly 4 Player, exactly 2 Team, 7 Int for {next is linear} is sat
 }
