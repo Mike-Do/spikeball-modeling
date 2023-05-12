@@ -4,6 +4,7 @@ open "spikeball_two.frg"
 /*
     Property verification tests for new properties added to Spikeball 2
 */
+
 -- invokes unsuccessful serve (from server to ground instead of to net) [SAT]
 pred server_to_ground {
     // there exists some state where in the pre the is_serving flag is 1 and in the post the ball is on ground
