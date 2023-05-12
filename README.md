@@ -7,7 +7,11 @@
 \____/| .__/|_|_|\_\___|_.__/ \__,_|_|_|
       | |                               
       |_|    
-```                           
+```
+<p align="center">
+  <img src="spikeball_viz_gif.gif" />
+</p>
+
 > [Presentation Link 🎾](https://www.canva.com/design/DAFiiEopbuM/Y29oPF0QSr5kwpA2SUkfiA/view?utm_content=DAFiiEopbuM&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
 
 We're modeling spikeball games with 4 players and 2 teams, where each team has 2 players. The players in each team and the position of the players are static. The game ends when either team has won by receiving 2 points.
@@ -52,12 +56,6 @@ By making these tradeoffs, the model generates detailed traces in a reasonable a
 > Note on Spikeball 1: When interpreting the vanilla Sterling output, the most important part is seeing how the `ball` field changes, to see how rallies, serving, and hitting to the net operate. You should see serves to either the net or the ground. In the case that it hits the net, it would either result in hitting the ground or the start of a perfect 3-touch rally. Due to using the maximum of 3 touches each time, the points are always awarded when the ball transitions from the net to the ground. You will also see that, in each state, each team has their own score.
 
 To make the long traces easier to interpret, we created a ✨ ${\color{lightblue}custom \space visualization}$ ✨ in Javascript! We first create a large `1 x num_states` grid whose cells contain smaller `3 x 3` grids that represent the playing field. When the ball turns ${\color{red}red}$, that means the designated server is serving the ball. On the right side of the outer grid are boxes containing state information, such as the state number, the score, and which team has possession in that state. Finally, the boxes alternate white and gray to make it easier to distinguish between the different states!
-
-<p align="center">
-  <img src="spikeball_viz_gif.gif" />
-</p>
-
-
 
 # High-level description of Sigs and Preds
 Sigs:
