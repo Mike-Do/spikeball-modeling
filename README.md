@@ -8,7 +8,7 @@
       | |                               
       |_|    
 ```                           
-> Click the emoji for the Presentation Link: [🎾](https://www.canva.com/design/DAFiiEopbuM/Y29oPF0QSr5kwpA2SUkfiA/view?utm_content=DAFiiEopbuM&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
+> [Presentation Link 🎾](https://www.canva.com/design/DAFiiEopbuM/Y29oPF0QSr5kwpA2SUkfiA/view?utm_content=DAFiiEopbuM&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
 
 We're modeling spikeball games with 4 players and 2 teams, where each team has 2 players. The players in each team and the position of the players are static. The game ends when either team has won by receiving 2 points.
 
