@@ -1,5 +1,4 @@
 #lang forge
-// option problem_type temporal
 
 // Position Sigs
 abstract sig Position {}
@@ -38,6 +37,7 @@ sig SBState {
     is_serving: one Int
 }
 
+-- Initializes the state of the game 
 pred SBinitState[s: SBState] {
     // both teams have scores of 0
     all t: Team {
@@ -66,31 +66,36 @@ pred SBinitState[s: SBState] {
     s.possession = s.serving_team
 }
 
-
-// TODO: may need to revisit this if a bug arises
+-- Ensures that the state of the game is valid
 pred SBValidStates {
-    // Positions of players do not change
-    // ball should in one of the positions
-    // One team should have possession at all times
     all s: SBState | {
+        // ball should in one of the positions
         (s.ball = Net or s.ball = Ground or s.ball = North or s.ball = South or s.ball = East or s.ball = West)
+
+        // one team should have possession at all times
         (s.possession = Team1 or s.possession = Team2)
 
+        // touches should be between 0 and 3
         s.num_touches >= 0
         s.num_touches <= 3
+
+        // either serving or not serving
         (s.is_serving = 0 or s.is_serving = 1)
+        // the serving_team should be one of the teams
         (s.serving_team = Team1 or s.serving_team = Team2)
+        // the server should be one of the players
         (s.server[Team1] = P1 or s.server[Team1] = P2)
         (s.server[Team2] = P3 or s.server[Team2] = P4)
     }
 
-    // Make sure score is not none
+    // Make sure score is not none and not negative
     all s: SBState, t: Team | {
         some s.score[t] and
         s.score[t] >= 0
     }
 }
 
+-- Defines what the final state of the game is
 pred SBfinalState[s: SBState] {
     // one team reached the winning score
     #{t: Team | s.score[t] = 2} = 1
@@ -105,13 +110,15 @@ pred SBfinalState[s: SBState] {
     s.num_touches >= 0
     s.num_touches <= 3
 
+    // one of the teams will be serving as a point is awarded from touching the ground in the previous state
     (s.serving_team = Team1 or s.serving_team = Team2)
     
-    // ball is necessarily in one of the postions, and is_serving would be true
+    // ball is necessarily in one of the postions, and is_serving is true
     (s.ball = North or s.ball = South or s.ball = East or s.ball = West)
     (s.is_serving = 1)
 }
 
+-- Defines the valid transitions between states
 pred SBvalidTransition[pre: State, post: State] {
     // GUARD
     // no one has won yet (has required score)
@@ -133,7 +140,7 @@ pred SBvalidTransition[pre: State, post: State] {
     ((pre.ball = North or pre.ball = South or pre.ball = East or pre.ball = West) and (pre.num_touches = 3) and (pre.is_serving = 0)) => (SBfoulTransition[pre, post])
 }
 
--- NEW 🎾
+-- Defines when a serve hits the net 🎾
 pred validServeTransition[pre: State, post: State] {
     // hit to the net
     post.ball = Net
@@ -141,6 +148,7 @@ pred validServeTransition[pre: State, post: State] {
     pre.possession = post.possession
     post.is_serving = 0
 
+    // number of touches stay the same
     pre.num_touches = post.num_touches
 
     // score does not change
@@ -155,7 +163,7 @@ pred validServeTransition[pre: State, post: State] {
     pre.serving_team = post.serving_team
 }
 
--- NEW 🎾
+-- Defines when the serve misses the net 🎾
 pred invalidServeTransition[pre: State, post: State] {
     // hit to the ground
     post.ball = Ground
@@ -177,14 +185,11 @@ pred invalidServeTransition[pre: State, post: State] {
         pre.server[t] = post.server[t]
     }
 
-    // serving team changes to the other team
-    // pre.serving_team != post.serving_team
-
     // serving team doesn't change (will change in groundTransition)
     pre.serving_team = post.serving_team
-    
 }
 
+-- Defines where the ball goes after hitting the net (either ground or another player on opposite team)
 pred SBnetTransition[pre: State, post: State] {
     // if the ball hits the net, then the ball will end up in possession of other team
     (pre.possession = Team1) => {
@@ -232,6 +237,7 @@ pred SBnetTransition[pre: State, post: State] {
     
 }
 
+-- Awards a point to the correct team and ensures that the correct team is serving in the next state
 pred SBgroundTransition[pre: State, post: State] {
     // the score increases (point), in next state new serve   
    (pre.possession = Team1) => {
@@ -266,6 +272,7 @@ pred SBgroundTransition[pre: State, post: State] {
             pre.server[Team2] = post.server[Team2]
         }
     } else {
+        // Team2 is serving
         (pre.possession = Team2) => {
             post.serving_team = Team2
             post.ball = (post.server[Team2]).position
@@ -293,6 +300,7 @@ pred SBgroundTransition[pre: State, post: State] {
     post.num_touches = 0
 }
 
+-- Defines how the ball moves between players on the same team
 pred SBrallyTransition[pre: State, post: State] {
     // pass to team member, necessariy one of the cardinal directions, increase touches
     // posession does not change
@@ -326,7 +334,7 @@ pred SBrallyTransition[pre: State, post: State] {
     pre.serving_team = post.serving_team
 }
 
--- NEW 🎾
+-- Defines behavior for when a teammate does not hit the ball during a rally 🎾
 pred SBrallyToGroundTransition[pre: State, post: State] {
     // from team member to ground
     // posession changes
@@ -354,7 +362,7 @@ pred SBrallyToGroundTransition[pre: State, post: State] {
 
 }
 
--- NEW 🎾
+-- Defines using less than 3 touches to hit to the net 🎾
 pred SBrallyToNet[pre: State, post: State] {
     // possession does not change (posession to other team handled by net transition)
     pre.possession = post.possession
@@ -380,6 +388,7 @@ pred SBrallyToNet[pre: State, post: State] {
     pre.serving_team = post.serving_team
 }
 
+-- Defines behavior for when a team uses their 3 touches and must hit to the net 🎾
 pred SBfoulTransition[pre: State, post: State] {
     // hit to the net after 3 touches!
     post.ball = Net
@@ -403,6 +412,7 @@ pred SBfoulTransition[pre: State, post: State] {
     pre.possession = post.possession
 }
 
+-- Defines the valid transitions between states
 pred TransitionStates {
     some init, final: SBState {
         SBinitState[init]
@@ -417,6 +427,7 @@ pred TransitionStates {
     }
 }
 
+-- Defines the setup of the game
 pred SBSetup {
     // define setup of static values throughout the game
     P1.position = North
@@ -430,6 +441,7 @@ pred SBSetup {
     P4.team = Team2
 }
 
+-- Defines the traces of the game
 pred traces {
     SBValidStates
     TransitionStates
