@@ -118,12 +118,12 @@ the following transition predicates: {validServeTransition}, {invalidServeTransi
 
 {SBSetup} contains the static values in the game, including the positions of the players and the players on each team.
 
-# New Features (compared to Curiosity Modeling)
-We added the following new features to our model to make it a more accurate representation of real life Spikeball games:
-- When a team is serving, the ball can either hit the net or the ground (In Curiosity Modeling, the ball could only hit the net).
-- Rallies can take either 1, 2 or 3 touches (In Curiosity Modeling, the rallies always used up all 3 touches).
-- The server on a team switches to the other player when the team started a serve but lost the point (In Curiosity Modeling, the servers on the teams were static throughout the game).
-- ${\color{lightblue}Custom \space Visualization}$!! (We used the default visualization in Curiosity Modeling)
+# New Features (compared to Version 1)
+We added the following new features to our model to make it a more accurate representation of real-life Spikeball games:
+- When a team is serving, the ball can either hit the net or the ground (In Version 1, the ball could only hit the net).
+- Rallies can take either 1, 2, or 3 touches (In Version 1, the rallies always used up all 3 touches).
+- The server on a team switches to the other player when the team started a serve but lost the point (In Version 1, the servers on the teams were static throughout the game).
+- ${\color{lightblue}Custom \space Visualization}$!! (We used the default visualization in Version 1)
 
 # Omitted Features
 * **Cannot move 360 degrees after serve (i.e., players can move to other cardinal directions).** This would require states where both the ball and the players moved, generating instances that would have been both too complex to interpret and to generate.
